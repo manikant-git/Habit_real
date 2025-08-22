@@ -4,7 +4,7 @@ import { Habit, HabitFormData } from './types/habit';
 import { HabitCard } from './components/HabitCard';
 import { StatsOverview } from './components/StatsOverview';
 import { HabitForm } from './components/HabitForm';
-import { getTodayString } from './utils/habitUtils';
+import { getTodayString } from './utils/habitutils';
 
 function App() {
   const [habits, setHabits] = useState<Habit[]>([]);
