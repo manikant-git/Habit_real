@@ -1,7 +1,7 @@
 import React from 'react';
 import { Target, Calendar, TrendingUp, Flame } from 'lucide-react';
 import { Habit } from '../types/habit';
-import { getStreak, getTodayString } from '../utils/habitutils';
+import { getStreak, getTodayString } from '../utils/habitUtils';
 
 interface StatsOverviewProps {
   habits: Habit[];
