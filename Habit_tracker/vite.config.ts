@@ -7,5 +7,5 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  base: '/',  // <-- THIS FIXES ASSET LOADING IN DOCKER/NGINX!
 });
-
