@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: habit-real
+  labels:
+    app: habit-real
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: habit-real
+  template:
+    metadata:
+      labels:
+        app: habit-real
+    spec:
+      containers:
+      - name: habit-real
+        image: <your_dockerhub_username>/habit_real:latest
+        ports:
+        - containerPort: 3000
