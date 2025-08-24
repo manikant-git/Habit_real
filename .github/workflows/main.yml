@@ -1,21 +1,18 @@
-name: Build and Push Docker Image
+name: Test and Deploy with Argo CD
 
 on:
   push:
     branches:
-      - master                # triggers when you push to master
-  workflow_dispatch:          # allows manual trigger from GitHub UI
+      - master
+  workflow_dispatch:
 
 jobs:
-  build:
+  build-test-deploy:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-
-    - name: List files for debug
-      run: ls -R
 
     - name: Set up Node.js
       uses: actions/setup-node@v3
@@ -24,6 +21,10 @@ jobs:
 
     - name: Install dependencies
       run: npm install
+      working-directory: Habit_tracker
+
+    - name: Run tests
+      run: npm test
       working-directory: Habit_tracker
 
     - name: Build project
@@ -42,3 +43,29 @@ jobs:
         context: ./Habit_tracker
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/habit_real:latest
+
+    - name: Install kubectl
+      run: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x kubectl
+        sudo mv kubectl /usr/local/bin/
+
+    - name: Install Argo CD CLI
+      run: |
+        curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+        chmod +x argocd
+        sudo mv argocd /usr/local/bin/
+
+    - name: Setup kubeconfig
+      run: |
+        aws eks --region ap-south-1 update-kubeconfig --name habit-real-cluster
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Sync Argo CD Application
+      env:
+        ARGOCD_SERVER: argocd-server.argocd.svc.cluster.local  # or your ArgoCD server URL
+        ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}   # Get this from ArgoCD CLI login
+      run: |
+        argocd app sync habit-real-app --grpc-web --server $ARGOCD_SERVER --auth-token $ARGOCD_AUTH_TOKEN
