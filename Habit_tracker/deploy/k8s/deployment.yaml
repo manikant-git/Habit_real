@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: habit-real
-        image: <your_dockerhub_username>/habit_real:latest
+        image: devopman/habit_real:latest
         ports:
         - containerPort: 3000
