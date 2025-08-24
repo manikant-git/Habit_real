@@ -66,6 +66,7 @@ jobs:
     - name: Sync Argo CD Application
       env:
         ARGOCD_SERVER: a1adb70f2e1f243d8bce7743d1a76ebe-822177928.ap-south-1.elb.amazonaws.com
-        ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}   # Get this from ArgoCD CLI login
+        ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}
       run: |
-        argocd app sync habit-real-app --grpc-web --server $ARGOCD_SERVER --auth-token $ARGOCD_AUTH_TOKEN
+        argocd app sync habit-real-app --grpc-web --server $ARGOCD_SERVER --auth-token $ARGOCD_AUTH_TOKEN --insecure
+
